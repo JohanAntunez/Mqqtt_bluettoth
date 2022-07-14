@@ -94,32 +94,35 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="430dp"
-        android:onClick="published"
-        android:text="PUBLISH"
+        android:onClick="abrir"
+        android:text="Prender"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/subText"
-        android:layout_width="94dp"
-        android:layout_height="37dp"
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="490dp"
-        android:text="TextView"
+        android:layout_marginTop="480dp"
+        android:onClick="cerrar"
+        android:text="Apagar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <Button
         android:id="@+id/connBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="530dp"
-        android:onClick="conn"
-        android:text="connect"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="540dp"
+        android:onClick="conn"
+        android:text="Conectar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.201"
         app:layout_constraintStart_toStartOf="parent"
@@ -129,14 +132,22 @@
         android:id="@+id/disconnBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="600dp"
         android:onClick="disconn"
-        android:text="disconnect"
-        android:layout_centerHorizontal="true"
+        android:text="Desconectar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.78"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/subText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="TextView"
+        android:layout_marginTop="700dp"/>
 
 
 </RelativeLayout>

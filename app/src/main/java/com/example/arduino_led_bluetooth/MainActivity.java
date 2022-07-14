@@ -44,12 +44,12 @@ public class MainActivity extends AppCompatActivity {
     MqttAndroidClient client;
     TextView subText;
 
-    String nombre_Dispositivo;                  //string para obtener el nombre del
+    String nombre_Dispositivo;                                //string para obtener el nombre del
     //parametros del broker la siguiente variable con el broker de shiftr.io
-    static String MQTTHOST = "tcp://postman.cloudmqtt.com"; //el broker
-    static String USERNAME = "lhcrtsku";          //el token de acceso
-    static String PASSWORD = "pdB8HRCpfCxN";             //la contraceña del token
-    static String subscribe = "cerradura/mensaje";
+    static String MQTTHOST = "postman.cloudmqtt.com"; //el broker
+    static String USERNAME = "lhcrtsku";                   //el token de acceso
+    static String PASSWORD = "pdB8HRCpfCxN";              //la contraceña del token
+    //static String topic = "cerradura/mensaje"; //el tópico
 
 
     private BluetoothAdapter btAdapter = null;
@@ -71,28 +71,25 @@ public class MainActivity extends AppCompatActivity {
 
         //obtener_nombre_Dispositivo();
 
+        //Se asocian los botones
         subText = (TextView) findViewById(R.id.subText);
         prender = findViewById(R.id.prender);
         btn = findViewById(R.id.btn);
         apagar = findViewById(R.id.Apagar);
         desconectar = findViewById(R.id.Desconectar);
 
-
+        //Ajustes para la conexión bluetooth
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         verificarBluetooth();
-
         Set<BluetoothDevice> pairedDeveicesList = btAdapter.getBondedDevices();
-
         for (BluetoothDevice pairedDevice : pairedDeveicesList) {
             if (pairedDevice.getName().equals("ESP32_BT")) {
 
                 address = pairedDevice.getAddress();
             }
-
-
         }
 
-
+        //Conecta al bluetooth
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,20 +97,21 @@ public class MainActivity extends AppCompatActivity {
                 onResume();
             }
         });
-
+        //Prende el led bluetooth
         prender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MyConexionBT.write("a");
             }
         });
+        //Apaga el led bluetooth
         apagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MyConexionBT.write("A");
             }
         });
-
+        //Se desconecta del bluetooth
         desconectar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,23 +125,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //MQTT-------------------------------
+//-----------------------MQTT------------------------------------------------------------------
         String clientId = MqttClient.generateClientId();
-        client = new MqttAndroidClient(this.getApplicationContext(), MQTTHOST, clientId);
+        client = new MqttAndroidClient(this.getApplicationContext(),"tcp://postman.cloudmqtt.com:10667", clientId);
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setUserName(USERNAME);
-        options.setPassword(PASSWORD.toCharArray());
+        options.setUserName("lhcrtsku");
+        options.setPassword("pdB8HRCpfCxN".toCharArray());
 
         try {
             IMqttToken token = client.connect(options);
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Toast.makeText(MainActivity.this, "connected!!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this,"connected!!",Toast.LENGTH_LONG).show();
                     setSubscription();
 
                 }
-
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Toast.makeText(MainActivity.this, "connection failed!!", Toast.LENGTH_LONG).show();
@@ -172,32 +169,39 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void published(View v){
-
+    //Topico para abrir la cerradura
+    public void abrir(View v){
         String topic = "cerradura/mensaje";
         String message = "ON";
         try {
             client.publish(topic, message.getBytes(),0,false);
-            Toast.makeText(this,"Published Message",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Abierta",Toast.LENGTH_SHORT).show();
+        } catch ( MqttException e) {
+            e.printStackTrace();
+        }
+    }
+    //Topico para cerrar la cerradura
+    public void cerrar(View v){
+        String topic = "cerradura/mensaje";
+        String message = "OFF";
+        try {
+            client.publish(topic, message.getBytes(),0,false);
+            Toast.makeText(this,"Cerrada",Toast.LENGTH_SHORT).show();
         } catch ( MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void setSubscription(){
-
         try{
-
             client.subscribe("event",0);
-
-
         }catch (MqttException e){
             e.printStackTrace();
         }
     }
 
+    //Hace la conexión por MQTT
     public void conn(View v){
-
         try {
             IMqttToken token = client.connect();
             token.setActionCallback(new IMqttActionListener() {
@@ -219,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //Se desconecta del MQTT
     public void disconn(View v){
 
         try {
@@ -244,9 +249,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
 //--------------BLUETOOTH------------------------------------------------------------------
 
     private BluetoothSocket createBluetoothSocket (BluetoothDevice device) throws IOException{
@@ -259,10 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void verificarBluetooth(){
         if(btAdapter.isEnabled()){
-
-
         }else{
-
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(intent,1);
         }
@@ -270,7 +269,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onResume() {
         super.onResume();
-
 
         if (activar) {
             BluetoothDevice device = btAdapter.getRemoteDevice(address);
